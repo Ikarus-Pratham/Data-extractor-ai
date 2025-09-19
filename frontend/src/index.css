@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    @apply bg-neutral-950 text-neutral-100 min-h-screen;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+/* Dark, minimal scrollbars (Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #0a0a0a;
+}
+
+/* Dark, minimal scrollbars (WebKit: Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #3f3f46; /* neutral-600 */
+  border-radius: 9999px;
+  border: 2px solid #0a0a0a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #52525b; /* neutral-500 */
+}

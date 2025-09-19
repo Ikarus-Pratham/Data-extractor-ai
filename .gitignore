@@ -1,0 +1,6 @@
+.env
+result/
+json/
+pdf/
+progress/
+__pycache__
