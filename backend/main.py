@@ -3,6 +3,10 @@ import logging
 from fastapi.middleware.cors import CORSMiddleware
 from routes.Dataroutes import router as DataRouter
 import torch
+import threading
+import time
+from file_queue import FileQueue
+from controllers.ExtractData import process_extraction
 
 logging.basicConfig(level=logging.INFO)
 logger: logging.Logger = logging.getLogger(__name__)
@@ -22,6 +26,30 @@ app.add_middleware(
 
 # register router
 app.include_router(DataRouter, prefix="/ai/api", tags=["Data Extraction"])
+
+queue = FileQueue()
+
+def worker_loop() -> None:
+    while True:
+        item = queue.dequeue()
+        if not item:
+            time.sleep(0.5)
+            continue
+        job_id, payload = item
+        try:
+            process_extraction(
+                pdf_path=payload["pdf_path"],
+                pdf_filename=payload["pdf_filename"],
+                pages=payload["pages"],
+            )
+            queue.mark_completed(job_id, {"message": "done"})
+        except Exception as e:
+            queue.mark_failed(job_id, str(e))
+
+@app.on_event("startup")
+def start_worker():
+    t = threading.Thread(target=worker_loop, daemon=True)
+    t.start()
 
 if __name__ == '__main__':
     import uvicorn
