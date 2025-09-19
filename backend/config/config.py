@@ -10,5 +10,5 @@ class Config:
         NAME = "gemma3:latest"
         TEMPERATURE = 0.1
         TOP_P = 0.9
-        NUM_CTX = 65536
+        NUM_CTX = 65536    # overkill but just in case
         NUM_PREDICT = -1

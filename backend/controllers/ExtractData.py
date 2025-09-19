@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
 from modals.DataRequestModal import DataReqModal
 from middlewares.ExtractAndSave import ExtractAndSaveData
 from config.config import Config
@@ -175,8 +174,7 @@ async def extractData(pdf_file, pages):
                         logger.error("Error saving final combined data")
                 else:
                     logger.error("Failed to combine data with both Ollama and Gemini")
-                
-        return JSONResponse(content={"message": "Data Extracted Successfully"})
+        return
 
     except Exception as e:
         logger.error(f"Error Processing Data: {str(e)}")

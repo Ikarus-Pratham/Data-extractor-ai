@@ -6,7 +6,6 @@ import RangeList, { type PageRange } from './components/RangeList.tsx'
 function App() {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [ranges, setRanges] = useState<PageRange[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
 
   const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://localhost:1234/ai/api/extract'
@@ -61,24 +60,18 @@ function App() {
     const formData = new FormData()
     formData.append('pdf_file', pdfFile)
     formData.append('pages', JSON.stringify(pages))
-
-    setIsSubmitting(true)
+    // Fire-and-forget: do not await server response
     try {
-      const response = await fetch(backendUrl, {
+      void fetch(backendUrl, {
         method: 'POST',
         body: formData,
+      }).catch(() => {
+        // Intentionally ignore async errors; frontend does not wait for response
       })
-
-      if (!response.ok) {
-        const text = await response.text()
-        throw new Error(text || `Request failed with status ${response.status}`)
-      }
-
-      setMessage('Request sent successfully.')
+      setMessage('Request sent.')
     } catch (err: any) {
-      setMessage(err?.message || 'Failed to send request.')
-    } finally {
-      setIsSubmitting(false)
+      // Only handles synchronous errors (rare for fetch init)
+      setMessage(err?.message || 'Failed to initiate request.')
     }
   }
 
@@ -108,10 +101,9 @@ function App() {
             <button
               type="button"
               onClick={handleSubmit}
-              disabled={isSubmitting}
               className="inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/60 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Sending...' : 'Send'}
+              Send
             </button>
             {message && <p className="text-sm text-neutral-300">{message}</p>}
           </section>
