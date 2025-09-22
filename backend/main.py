@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 import logging
 from fastapi.middleware.cors import CORSMiddleware
 from routes.Dataroutes import router as DataRouter
@@ -12,20 +13,6 @@ logging.basicConfig(level=logging.INFO)
 logger: logging.Logger = logging.getLogger(__name__)
 
 logger.info(f"Running on GPU instance: {torch.cuda.is_available()}")
-
-app = FastAPI(title="Data Extractor AI", description="API for Data Extraction", version="0.0.1")
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# register router
-app.include_router(DataRouter, prefix="/ai/api", tags=["Data Extraction"])
 
 queue = FileQueue()
 
@@ -46,10 +33,30 @@ def worker_loop() -> None:
         except Exception as e:
             queue.mark_failed(job_id, str(e))
 
-@app.on_event("startup")
-def start_worker():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # start background worker on startup
     t = threading.Thread(target=worker_loop, daemon=True)
     t.start()
+    try:
+        yield
+    finally:
+        # No explicit shutdown; daemon thread exits with process
+        pass
+
+app = FastAPI(title="Data Extractor AI", description="API for Data Extraction", version="0.0.1", lifespan=lifespan)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# register router
+app.include_router(DataRouter, prefix="/ai/api", tags=["Data Extraction"])
 
 if __name__ == '__main__':
     import uvicorn
