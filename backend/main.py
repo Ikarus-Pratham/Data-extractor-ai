@@ -52,12 +52,12 @@ app = FastAPI(title="Data Extractor AI", description="API for Data Extraction", 
 allowed_origins = [
     "https://data-extractor-ai.vercel.app",
     "https://data-extractor-ai.vercel.app/",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "https://inline-bye-anthony-store.trycloudflare.com"
+    "https://inline-bye-anthony-store.trycloudflare.com/"
     "https://smhxghmg-5173.inc1.devtunnels.ms/"
-    "https://smhxghmg-5173.inc1.devtunnels.ms"
+    "https://smhxghmg-5173.inc1.devtunnels.ms",
 ]
-
+ 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,

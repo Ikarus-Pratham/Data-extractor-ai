@@ -8,7 +8,7 @@ function App() {
   const [ranges, setRanges] = useState<PageRange[]>([])
   const [message, setMessage] = useState<string | null>(null)
 
-  const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'https://n1y4qnwbtgu0.share.zrok.io/ai/api/extract'
+  const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'https://inline-bye-anthony-store.trycloudflare.com/ai/api/extract'
 
   const handleAddRange = () => {
     setRanges((prev) => [...prev, { start: '', end: '' }])
