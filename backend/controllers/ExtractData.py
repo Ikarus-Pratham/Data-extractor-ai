@@ -176,7 +176,7 @@ async def extractData(pdf_file, pages):
             pdf_filename=pdf_file.filename,
             pages=pages_dict.pages
         )
-        return
+        return 
 
     except Exception as e:
         logger.error(f"Error Processing Data: {str(e)}")

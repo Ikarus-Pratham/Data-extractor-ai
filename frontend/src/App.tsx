@@ -60,18 +60,24 @@ function App() {
     const formData = new FormData()
     formData.append('pdf_file', pdfFile)
     formData.append('pages', JSON.stringify(pages))
-    // Fire-and-forget: do not await server response
     try {
-      void fetch(backendUrl, {
+      const res = await fetch(backendUrl, {
         method: 'POST',
         body: formData,
-      }).catch(() => {
-        // Intentionally ignore async errors; frontend does not wait for response
       })
+      if (!res.ok) {
+        let bodyText = ''
+        try {
+          bodyText = await res.text()
+        } catch {}
+        const statusLine = `${res.status}${res.statusText ? ' ' + res.statusText : ''}`
+        setMessage(`Request failed (${statusLine})${bodyText ? ': ' + bodyText : ''}`)
+        return
+      }
       setMessage('Request sent.')
     } catch (err: any) {
-      // Only handles synchronous errors (rare for fetch init)
-      setMessage(err?.message || 'Failed to initiate request.')
+      // Handles network/CORS and other fetch errors
+      setMessage(err?.message || 'Network error while sending request.')
     }
   }
 
