@@ -1,7 +1,6 @@
-.env
-result/
+__pycache__
 json/
 pdf/
-progress/
-__pycache__
 queue_data/
+result/
+progress/

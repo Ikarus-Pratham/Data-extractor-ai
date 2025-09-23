@@ -8,7 +8,7 @@ function App() {
   const [ranges, setRanges] = useState<PageRange[]>([])
   const [message, setMessage] = useState<string | null>(null)
 
-  const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://localhost:1234/ai/api/extract'
+  const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'https://smhxghmg-1234.inc1.devtunnels.ms/ai/api/extract'
 
   const handleAddRange = () => {
     setRanges((prev) => [...prev, { start: '', end: '' }])

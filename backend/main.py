@@ -49,7 +49,7 @@ app = FastAPI(title="Data Extractor AI", description="API for Data Extraction", 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://smhxghmg-5173.inc1.devtunnels.ms/", "https://smhxghmg-5173.inc1.devtunnels.ms"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

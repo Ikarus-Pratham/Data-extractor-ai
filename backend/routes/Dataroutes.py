@@ -25,17 +25,24 @@ async def extractDataRoute(
     """
     Enqueue a data extraction job and return job_id.
     """
-    # Save PDF to disk (same as original) but return immediately
-    pdf_bytes = await pdf_file.read()
+    # Stream save the uploaded PDF to disk to avoid loading the whole file into memory
     from config.config import Config
     config = Config()
-    if not os.path.exists(config.Dirs.PDF_DIR):        
+    if not os.path.exists(config.Dirs.PDF_DIR):
         os.makedirs(config.Dirs.PDF_DIR, exist_ok=True)
-    with open(config.Dirs.PDF_DIR + "/" + pdf_file.filename, "wb") as f:
-        f.write(pdf_bytes)
+    target_path = config.Dirs.PDF_DIR + "/" + pdf_file.filename
+    CHUNK_SIZE = 1024 * 1024  # 1 MB chunks
+    with open(target_path, "wb") as f:
+        while True:
+            chunk = await pdf_file.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            f.write(chunk)
+    # Reset file pointer (not strictly necessary after streaming)
+    await pdf_file.close()
     pages_dict = json.loads(pages)
     job_id = queue.enqueue({
-        "pdf_path": config.Dirs.PDF_DIR + "/" + pdf_file.filename,
+        "pdf_path": target_path,
         "pdf_filename": pdf_file.filename,
         "pages": pages_dict
     })

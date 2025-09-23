@@ -7,7 +7,7 @@ class Config:
         PROGRESS_FILE = "progress.json"
 
     class Model:
-        NAME = "gemma3:latest"
+        NAME = "gemma3:12b"
         TEMPERATURE = 0.1
         TOP_P = 0.9
         NUM_CTX = 65536    # overkill but just in case
