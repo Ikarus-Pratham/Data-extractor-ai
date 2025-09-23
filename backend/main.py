@@ -47,9 +47,20 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Data Extractor AI", description="API for Data Extraction", version="0.0.1", lifespan=lifespan)
 
 # CORS middleware
+# Note: Starlette does not allow wildcard origins when allow_credentials=True.
+# Explicitly list allowed origins so Access-Control-Allow-Origin is set correctly.
+allowed_origins = [
+    "https://data-extractor-ai.vercel.app",
+    "https://data-extractor-ai.vercel.app/",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://smhxghmg-5173.inc1.devtunnels.ms/"
+    "https://smhxghmg-5173.inc1.devtunnels.ms"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
